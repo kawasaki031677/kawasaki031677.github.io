@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>kawasaki031677 | Portfolio</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 100%;
+      min-height: 100vh;
+      background: #ffffff;
+      color: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      z-index: 10;
+    }
+
+    /* アニメーション用キャンバス */
+    .canvas-wrapper {
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 4 / 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* プロフィール情報（初期状態は透明にして鳥居完成時にフェードイン） */
+    .profile-card {
+      text-align: center;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+      pointer-events: none;
+    }
+    .profile-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .username-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .username {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #1e293b;
+    }
+
+    /* サッカーボール絵文字 */
+    .soccer-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+      display: inline-block;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ソーシャルリンクボタン */
+    .links-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      width: 100%;
+    }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #334155;
+    }
+    .link-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* プラットフォーム別アクセントカラー */
+    .link-btn.github:hover {
+      background: #24292e;
+      color: #ffffff;
+      border-color: #24292e;
+    }
+    .link-btn.qiita:hover {
+      background: #55c500;
+      color: #ffffff;
+      border-color: #55c500;
+    }
+    .link-btn.devto:hover {
+      background: #0a0a0a;
+      color: #ffffff;
+      border-color: #0a0a0a;
+    }
+
+    .link-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 鳥居＆桜パーティクル用キャンバス -->
+  <div class="canvas-wrapper">
+    <canvas id="c" width="800" height="600"></canvas>
+  </div>
+
+  <!-- ユーザープロフィール情報（アニメーション完成時に表示） -->
+  <div class="profile-card" id="profileCard">
+    <div class="username-wrapper">
+      <h1 class="username">kawasaki031677</h1>
+      <span class="soccer-icon" title="Soccer">⚽</span>
+    </div>
+    <p class="subtitle">Cloud Architect / Platform Engineer / AI-assisted Development</p>
+
+    <!-- 各プラットフォームへのリンク -->
+    <div class="links-container">
+      <!-- GitHub -->
+      <a href="https://github.com/kawasaki031677" target="_blank" rel="noopener noreferrer" class="link-btn github">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+
+      <!-- Qiita（公式ロゴ） -->
+      <a href="https://qiita.com/kawasaki031677" target="_blank" rel="noopener noreferrer" class="link-btn qiita">
+        <svg viewBox="0 0 24 24"><path d="M20.25 10.5c-.83 0-1.5.67-1.5 1.5v6.75c0 .83-.67 1.5-1.5 1.5H6.75c-.83 0-1.5-.67-1.5-1.5V12c0-.83-.67-1.5-1.5-1.5S2.25 11.17 2.25 12v6.75A4.5 4.5 0 006.75 23.25h10.5a4.5 4.5 0 004.5-4.5V12c0-.83-.67-1.5-1.5-1.5zM12 .75C8.28 .75 5.25 3.78 5.25 7.5S8.28 14.25 12 14.25 18.75 11.22 18.75 7.5 15.72 .75 12 .75zm0 10.5c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg>
+        Qiita
+      </a>
+
+      <!-- DEV -->
+      <a href="https://dev.to/kawasaki031677" target="_blank" rel="noopener noreferrer" class="link-btn devto">
+        <svg viewBox="0 0 448 512"><path d="M120.12 208.29c-3.88-2.9-8.63-4.35-14.09-4.35h-9.21v70.85h9.21c5.46 0 10.21-1.45 14.09-4.35 3.88-2.9 5.82-7.25 5.82-13.06v-36.03c0-5.81-1.94-10.16-5.82-13.06zM304.1 203.94h-18.73v70.85h18.73c7.58 0 13.62-2.16 18.12-6.48 4.5-4.32 6.75-10.42 6.75-18.3v-21.29c0-7.88-2.25-13.98-6.75-18.3-4.5-4.32-10.54-6.48-18.12-6.48zm127.9-107.94H16c-8.84 0-16 7.16-16 16v280c0 8.84 7.16 16 16 16h416c8.84 0 16-7.16 16-16V112c0-8.84-7.16-16-16-16zM143.25 272.93c-6.12 8.7-15.62 13.05-28.5 13.05H75.56V182.01h39.19c12.88 0 22.38 4.35 28.5 13.05 6.12 8.7 9.18 20.31 9.18 34.83v8.21c0 14.52-3.06 26.13-9.18 34.83zm100.8-31.52h-27.11v17.2h32.11v23.41h-57.11V182.01h57.11v23.41h-32.11v15.22h27.11v20.77zm100.2 31.52c-8.12 8.7-19.38 13.05-33.78 13.05h-43.73V182.01h43.73c14.4 0 25.66 4.35 33.78 13.05 8.12 8.7 12.18 20.31 12.18 34.83v8.21c0 14.52-4.06 26.13-12.18 34.83z"/></svg>
+        DEV
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const profileCard = document.getElementById('profileCard');
+
+const W = 800, H = 600, C = 6; 
+const cols = Math.floor(W / C), rows = Math.floor(H / C);
+
+// 朱色の鳥居（Torii）のSVGパスデータ
+const toriiPaths = [
+  'M 140 120 L 660 120 L 670 150 L 130 150 Z', // 笠木
+  'M 180 210 L 620 210 L 620 240 L 180 240 Z', // 貫
+  'M 380 150 L 420 150 L 420 210 L 380 210 Z', // 額束
+  'M 240 150 L 280 150 L 260 520 L 220 520 Z', // 左柱
+  'M 520 150 L 560 150 L 580 520 L 540 520 Z', // 右柱
+  'M 200 520 L 280 520 L 290 550 L 190 550 Z', // 台石左
+  'M 510 520 L 590 520 L 600 550 L 500 550 Z'  // 台石右
+];
+
+let paths = toriiPaths.map(d => new Path2D(d));
+let targets = [], settled = new Set(), cellColors = new Map(), falling = [], last = 0;
+
+// --- 舞い散る桜の花びら（パーティクル）生成 ---
+const petals = [];
+const petalColors = ['#fecdd3', '#fda4af', '#f43f5e', '#ffe4e6'];
+for (let i = 0; i < 35; i++) {
+  petals.push({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    size: 4 + Math.random() * 5,
+    speedY: 0.8 + Math.random() * 1.2,
+    speedX: Math.random() * 0.8 - 0.4,
+    angle: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.03,
+    color: petalColors[Math.floor(Math.random() * petalColors.length)]
+  });
+}
+
+function updateAndDrawPetals() {
+  for (const p of petals) {
+    p.y += p.speedY;
+    p.x += Math.sin(p.angle) * 0.8 + p.speedX;
+    p.angle += p.spin;
+
+    if (p.y > H + 10) {
+      p.y = -10;
+      p.x = Math.random() * W;
+    }
+
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.angle);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = 0.7;
+    
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(p.size / 2, -p.size / 2, p.size / 2, 0, Math.PI, true);
+    ctx.lineTo(0, p.size);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function insideMap(x, y) {
+  return paths.some(p => ctx.isPointInPath(p, x, y));
+}
+
+function buildTargets() {
+  targets = [];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      let px = (x + 0.5) * C, py = (y + 0.5) * C;
+      if (insideMap(px, py)) targets.push({ x, y, key: y * cols + x });
+    }
+  }
+  targets.sort((a, b) => a.y - b.y || Math.random() - 0.5);
+}
+
+function spawn() {
+  if (!targets.length) return;
+  let amount = 1 + Math.floor(Math.random() * 4);
+  let base = targets.shift();
+  let cells = [base];
+
+  for (let i = 1; i < amount; i++) {
+    let options = targets.filter(t => Math.abs(t.x - base.x) <= 2 && Math.abs(t.y - base.y) <= 2);
+    if (!options.length) break;
+    let n = options[Math.floor(Math.random() * options.length)];
+    targets.splice(targets.indexOf(n), 1);
+    cells.push(n);
+  }
+
+  const palette = [
+    '#fff1f2', 
+    '#ffe4e6', 
+    '#fecdd3', 
+    '#fda4af', 
+    '#fb7185', 
+    '#f43f5e', 
+    '#e11d48'  
+  ];
+
+  falling.push({
+    cells,
+    x: cells[0].x * C,
+    y: -Math.random() * 150 - 20,
+    vy: 140 + Math.random() * 180,
+    color: palette[Math.floor(Math.random() * palette.length)],
+    delay: Math.random() * 0.15
+  });
+}
+
+function drawScene() {
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // 桜の花びらを描画
+  updateAndDrawPetals();
+
+  // 積み上がった鳥居ブロックを描画
+  for (const k of settled) {
+    let x = k % cols, y = Math.floor(k / cols);
+    ctx.fillStyle = cellColors.get(k) || '#fecdd3';
+    ctx.fillRect(x * C + 0.5, y * C + 0.5, C - 1, C - 1);
+  }
+
+  // 落下中のブロックを描画
+  for (const p of falling) {
+    ctx.fillStyle = p.color;
+    for (const c of p.cells) {
+      let dx = (c.x - p.cells[0].x) * C, dy = (c.y - p.cells[0].y) * C;
+      ctx.fillRect(p.x + dx + 0.5, p.y + dy + 0.5, C - 1, C - 1);
+    }
+  }
+
+  // ブロックの積み上がり率に応じてプロフィール表示
+  const total = settled.size + targets.length + falling.reduce((a, p) => a + p.cells.length, 0);
+  const progress = settled.size / Math.max(1, total);
+  
+  if (progress > 0.5) {
+    profileCard.classList.add('visible');
+  }
+}
+
+function loop(t) {
+  let dt = Math.min((t - last) / 1000, 0.04);
+  last = t;
+
+  // ブロックが残っている場合のみ新しいブロックを発生させる
+  if (targets.length && falling.length < 45 && Math.random() < 0.95) {
+    spawn();
+  }
+
+  // 落下中ブロックの物理計算
+  for (let i = falling.length - 1; i >= 0; i--) {
+    let p = falling[i];
+    if (p.delay > 0) {
+      p.delay -= dt;
+      continue;
+    }
+    p.y += p.vy * dt;
+    let dest = Math.max(...p.cells.map(c => c.y)) * C;
+
+    if (p.y >= dest) {
+      for (const c of p.cells) {
+        settled.add(c.key);
+        cellColors.set(c.key, p.color);
+      }
+      falling.splice(i, 1);
+    }
+  }
+
+  // 描画更新
+  drawScene();
+
+  // 単一のシンプルなループで永続実行（リセットせず鳥居は完成したまま静止）
+  requestAnimationFrame(loop);
+}
+
+buildTargets();
+last = performance.now();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
